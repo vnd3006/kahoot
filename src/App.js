@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import { Route, BrowserRouter } from "react-router-dom";
+import Landing from "./components/Landing/Landing";
+// import Main from "./components/Host/Main";
+// import New_Quiz from "./components/Host/New_Quiz";
+// import Game from "./components/Game/Game";
+// import Questions from "./components/Host/Questions";
+// import New_Question from "./components/Host/New_Question";
+// import Player from "./components/Game/Player";
+// import Edit_Question from "./components/Host/Edit_Question";
+import "./App.css";
+import "./reset.css";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  render() {
+    return (
+      <div>
+        <BrowserRouter>
+          <Route path="/" exact component={Landing} />
+          {/* <Route path="/game" component={Game} />
+          <Route path="/host" exact component={Main} />
+          <Route path="/host/newQuiz" component={New_Quiz} />
+          <Route path="/host/questions" component={Questions} />
+          <Route path="/host/newquestion/:id" component={New_Question} />
+          <Route path="/host/editquestion/:id" component={Edit_Question} />
+          <Route path="/player" component={Player} /> */}
+        </BrowserRouter>
+      </div>
+    );
+  }
 }
 
 export default App;
