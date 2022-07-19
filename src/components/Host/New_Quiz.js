@@ -5,12 +5,12 @@ import { connect } from "react-redux";
 import { editingQuiz } from "../../Ducks/Reducer";
 
 function New_Quiz(props) {
-  const [quizName, setQuizName] = useState("");
+  const [quiz_name, setQuiz_name] = useState("");
   const [info, setInfo] = useState("");
   const [redirect, setRedirect] = useState(false);
 
   const handleInput = (e) => {
-    setQuizName(e.target.value);
+    setQuiz_name(e.target.value);
   };
 
   const handleTextarea = (e) => {
@@ -20,7 +20,7 @@ function New_Quiz(props) {
   const createQuiz = () => {
     axios
       .post("/api/newquiz", {
-        name: quizName,
+        name: quiz_name,
         info: info,
       })
       .then((res) => {
