@@ -194,6 +194,7 @@ class Game extends Component {
         ) : isLive && !questionOver && !gameOver ? (
           <GameQuestions
             question={questions[currentQuestion].question}
+            image={questions[currentQuestion].image}
             answer1={questions[currentQuestion].answer1}
             answer2={questions[currentQuestion].answer2}
             answer3={questions[currentQuestion].answer3}
