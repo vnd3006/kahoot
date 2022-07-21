@@ -9,11 +9,10 @@ export default function GameOver(props) {
       <Zoom />
       <h1 className="leaderBoard-title">Game Over</h1>
       <br />
-      <h2 className="leaderBoard">1st Place: {props.leaderboard[0].name}</h2>
-      <h2 className="leaderBoard">2nd Place: {props.leaderboard[1].name}</h2>
-      <h2 className="leaderBoard">
-        Last Place: {props.leaderboard.pop().name}
-      </h2>
+      <h2 className="leaderBoard">1st : {props.leaderboard[0].name}</h2>
+      <h2 className="leaderBoard">2nd : {props.leaderboard[1].name}</h2>
+      <h2 className="leaderBoard">3rd : {props.leaderboard[2].name}</h2>
+  
       <br />
       <Link to="/host">
         <button className="btn-newGame">Start a new Game?</button>

@@ -54,7 +54,7 @@ class Game extends Component {
   startGame() {
     let { players } = this.state;
     if (
-      players[0] //&& players[1] && players[2]
+      players[0] && players[1] && players[2]
     ) {
       this.nextQuestion();
       this.setState({
