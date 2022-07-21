@@ -7,10 +7,12 @@ import square from "../../Assests/square.svg";
 import circle from "../../Assests/circle.svg";
 
 export default function GameQuestions(props) {
+  console.log(props.image)
   return (
     <div className="questions-container">
       <Timer />
       <h1 className="player-name">{props.question}</h1>
+      {props.image && <img style={{height:"100px", width:"100px"}} src={props.image}></img>}
       <div className="questions-grid">
         <div className="question q1">
           <div className="shape-container">
