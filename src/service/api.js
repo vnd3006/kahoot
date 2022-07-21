@@ -36,7 +36,7 @@ instance.interceptors.response.use(
     return res;
   },
   async (err) => {
-
+    console.log('errrrrrrrrrr 39-api');
     const originalConfig = err.config;
 
 
@@ -45,7 +45,7 @@ instance.interceptors.response.use(
       // access token expired
       if (err.response.status === 401 && !originalConfig._retry) {
         // handle infinite loop
-       
+       console.log('48api ');
         originalConfig._retry = true;
 
         try {
@@ -53,12 +53,14 @@ instance.interceptors.response.use(
             accessToken: TokenService.getLocalAccessToken(),
             refreshToken: TokenService.getLocalRefreshToken(),
           });
+          console.log('sssssssssss-- ',rs.data)
 
           const { accessToken } = rs.data;
           TokenService.updateNewAccessToken(accessToken);
 
           return instance(originalConfig);
         } catch (_error) {
+          console.log('sqqqqqqqqqqqqqqqqqqqq')
           return Promise.reject(_error);
         }
       }

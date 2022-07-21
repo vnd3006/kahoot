@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { editingQuiz } from "../../Ducks/Reducer";
 import "./Host-Question.css";
@@ -13,14 +12,18 @@ function Questions(props) {
   const [newName, setNewName] = useState("");
   const [newInfo, setNewInfo] = useState("");
   const [toggle, setToggle] = useState(false);
+  const [forbidden, setForbidden] = useState(false);
 
   useEffect(() => {
-    setQuiz(props.quizToEdit);
-    setNewName(props.quizToEdit.quizName);
-    setNewInfo(props.quizToEdit.info);
-    getQuestions();
+    if(props.quizToEdit === undefined){
+      setForbidden(true)
+    }else{
+      setQuiz(props.quizToEdit);
+      setNewName(props.quizToEdit.quizName);
+      setNewInfo(props.quizToEdit.info);
+      getQuestions();
+    }
   }, []);
-
   const getQuestions = () => {
     api.get(`/api/getquestions/${props.quizToEdit._id}`).then((res) => {
       setQuestions(res.data);
@@ -52,19 +55,20 @@ function Questions(props) {
       alert("All fields must be completed");
     }
   };
-  console.log('----',quiz.quizName)
   const handleUpdatedQuiz = (id) => {
     api.get(`/api/getquiz/${id}`).then((res) => {
       props.editingQuiz(res.data);
       setQuiz(props.quizToEdit);
     });
   };
-
+  if(forbidden === true){
+    return <Redirect to='/host'/>
+  }
   let mappedQuestions;
   if (questions) {
     mappedQuestions = questions.map((question) => {
       return (
-        <div key={question.id} className="question-container">
+        <div key={question._id} className="question-container">
           <h1>{question.question}</h1>
           <ul>
             <li>1: {question.answer1}</li>
@@ -94,7 +98,7 @@ function Questions(props) {
       {!toggle ? (
         <div className="toggle-container">
           <div className="btn-done-div">
-            <Link to="/host">
+            <Link to = "/host">
               <button className="btn-play btn-done">Done</button>
             </Link>
           </div>
@@ -152,6 +156,8 @@ function Questions(props) {
       )}
       <div className="question-edit-wrapper">
         <div className="add-quesiton-div">
+          {props.quizToEdit === undefined ?
+          '':
           <Link
             to={`/host/newquestion/${props.quizToEdit._id}`}
             className="btn-link"
@@ -160,6 +166,7 @@ function Questions(props) {
               Add Question
             </button>
           </Link>
+          }
         </div>
         <br />
         <br />
@@ -169,6 +176,9 @@ function Questions(props) {
   );
 }
 function mapStateToProps(state) {
+  if(state === undefined){
+    return {quizToEdit: undefined}
+  }
   return {
     quizToEdit: state.quizToEdit,
   };

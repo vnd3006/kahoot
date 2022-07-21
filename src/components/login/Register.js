@@ -1,4 +1,4 @@
-import React,{ Component, useState } from "react";
+import React,{ useState } from "react";
 import { connect } from "react-redux";
 import { Redirect, Link } from "react-router-dom";
 import authService from "../../service/auth.service";

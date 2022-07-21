@@ -24,6 +24,7 @@ function Main(props) {
       setQuizzes([...res.data]);
     }).catch(err =>{
       setforbidden(true);
+      console.log('err getQuizz',err)
     });
   };
 
@@ -44,11 +45,11 @@ function Main(props) {
   };
 
   const handleLogout = ()=>{
-    authService.logout();
+    authService.logout()
   }
   let mappedQuizzes = quizzes.map((quiz) => {
     return (
-      <div key={quiz.id} className="kwizz-container">
+      <div key={quiz._id} className="kwizz-container">
         <h1 className="kwizz-info kwizz-title">{quiz.quizName}</h1>
         <p className="kwizz-info kwizz-desc">{quiz.info}</p>
         <div className="btn-container">
@@ -70,7 +71,7 @@ function Main(props) {
       </div>
     );
   });
- if(forbidden == true){
+ if(forbidden === true){
   return <Redirect to="/login"/>
  }
 

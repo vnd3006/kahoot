@@ -5,6 +5,7 @@ import PlayerQuestions from "./Player_Questions";
 import PlayerQuestionOver from "./Player_Question_Over";
 import "./Game.css";
 import load from "../../Assests/load-circle-outline.svg";
+import { Redirect } from "react-router-dom";
 
 class Player extends Component {
   constructor() {
@@ -20,30 +21,32 @@ class Player extends Component {
     this.submitAnswer = this.submitAnswer.bind(this);
   }
   componentDidMount() {
-    this.socket = io("http://localhost:3030",{ transports : ['websocket'] });
-    this.socket.emit("player-joined", this.props.selectedPin);
-    this.socket.emit("player-add", this.props);
-    this.socket.on("room-joined", (data) => {
-    });
-    this.socket.on("question-over", () => {
-      this.setState({
-        questionOver: true,
+    if(this.props.selectedPin !== undefined){
+      this.socket = io("http://localhost:3030",{ transports : ['websocket'] });
+      this.socket.emit("player-joined", this.props.selectedPin);
+      this.socket.emit("player-add", this.props);
+      this.socket.on("room-joined", (data) => {
       });
-    });
-    this.socket.on("next-question", () => {
-      this.setState({
-        gameStarted: true,
-        questionOver: false,
-        answerSubmitted: false,
-        answeredCorrect: false,
+      this.socket.on("question-over", () => {
+        this.setState({
+          questionOver: true,
+        });
       });
-    });
-    this.socket.on("sent-info", (data) => {
-      this.setState({
-        answeredCorrect: data.answeredCorrect,
-        score: data.score,
+      this.socket.on("next-question", () => {
+        this.setState({
+          gameStarted: true,
+          questionOver: false,
+          answerSubmitted: false,
+          answeredCorrect: false,
+        });
       });
-    });
+      this.socket.on("sent-info", (data) => {
+        this.setState({
+          answeredCorrect: data.answeredCorrect,
+          score: data.score,
+        });
+      });
+    }
   }
   submitAnswer(num) {
     this.socket.emit("question-answered", {
@@ -56,6 +59,9 @@ class Player extends Component {
     });
   }
   render() {
+    if(this.props.selectedPin === undefined){
+      return <Redirect to= '/'/>
+    }
 
     let { gameStarted, questionOver, answerSubmitted } = this.state;
     return (
@@ -66,7 +72,7 @@ class Player extends Component {
           </p>
         </div>
         {!gameStarted && !questionOver ? (
-          <div>
+          <div className="wating-room">
             <p>
               You're in!
               <br />
@@ -109,6 +115,11 @@ class Player extends Component {
 }
 
 function mapStateToProps(state) {
+  if(state === undefined){
+    return{
+      selectedPin: undefined
+    }
+  }
   return {
     selectedPin: state.selectedPin,
     nickname: state.nickname,

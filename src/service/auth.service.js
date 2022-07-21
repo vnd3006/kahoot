@@ -19,12 +19,12 @@ const login = async (username, password) => {
     username,
     password,
   });
-  console.log(response);
+  console.log('login response: ',response);
   if (response.data.accessToken) {
     // localStorage.setItem("user", JSON.stringify(response.data));
     TokenService.setUser(response.data);
   }
-  console.log(response.data);
+  console.log('respone data login ',response.data);
   return response.data;
 };
 

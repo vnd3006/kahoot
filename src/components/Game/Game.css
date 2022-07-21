@@ -12,6 +12,17 @@
     grid-auto-rows: minmax(18em, auto);
 }
 
+.wating-room {
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wating-room p {
+    font-size: 24px;
+}
+
 
 /* shapes------------------------------------ */
 

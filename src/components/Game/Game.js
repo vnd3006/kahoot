@@ -1,10 +1,10 @@
-import React, { Component, useEffect, useState } from "react";
-import axios from "axios";
+import React, { Component, } from "react";
 import io from "socket.io-client";
 import { connect } from "react-redux";
 import GameQuestions from "./Game_Questions";
 import GameQuestionOver from "./Game_Question_Over";
 import api from "../../service/api";
+import { Redirect } from "react-router-dom";
 
 class Game extends Component {
   constructor() {
@@ -20,25 +20,30 @@ class Game extends Component {
       players: [],
       playerCounter: 0,
       leaderBoard: [],
+      forbidden: false
     };
     this.questionOver = this.questionOver.bind(this);
     this.nextQuestion = this.nextQuestion.bind(this);
 
   }
   componentDidMount() {
-    api.get(`/api/getquestions/${this.props.quiz._id}`,).then((res) => {
-      this.setState({ questions: res.data });
-    });
-    this.socket = io("http://localhost:3030",{ transports : ['websocket'] });
-
-    this.generatePin();
-
-    this.socket.on("room-joined", (data) => {
-      this.addPlayer(data.name, data.id);});
+    if(this.props.quiz === undefined){
+      this.setState({forbidden : true})
+    }else{
+      api.get(`/api/getquestions/${this.props.quiz._id}`,).then((res) => {
+        this.setState({ questions: res.data });
+      });
+      this.socket = io("http://localhost:3030",{ transports : ['websocket'] });
   
-    this.socket.on("player-answer", (data) => {
-      this.submitAnswer(data.name, data.answer);
-    });
+      this.generatePin();
+  
+      this.socket.on("room-joined", (data) => {
+        this.addPlayer(data.name, data.id);});
+    
+      this.socket.on("player-answer", (data) => {
+        this.submitAnswer(data.name, data.answer);
+      });
+    }
   }
 
   generatePin() {
@@ -167,6 +172,9 @@ class Game extends Component {
   }
 
   render() {
+    if(this.state.forbidden === true){
+      return <Redirect to='/host'/>
+    }
     let { pin, questions, currentQuestion, isLive, questionOver, gameOver } =
       this.state;
     let mappedPlayers = this.state.players.map((player) => {
@@ -217,6 +225,10 @@ class Game extends Component {
 }
 
 function mapStateToProps(state) {
+  if(state === undefined)
+  {
+    return {quiz: undefined}
+  }
   return {
     quiz: state.quiz,
   };
