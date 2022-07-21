@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import axios from "axios";
+import api from "../../service/api";
 import { Redirect } from "react-router-dom";
 import { Link } from "react-router-dom";
 import "./Host-New-Question.css";
@@ -24,7 +24,7 @@ export default class New_Question extends Component {
       this.state;
     let { id } = this.props.match.params;
     if (question && answer1 && answer2 && answer3 && answer4 && correctAnswer) {
-      axios
+      api
         .post("/api/newquestion", {
           question,
           answer1,

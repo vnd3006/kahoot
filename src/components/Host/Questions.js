@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { editingQuiz } from "../../Ducks/Reducer";
 import "./Host-Question.css";
 import "./Host.css";
+import api from "../../service/api"
 
 class Questions extends Component {
   constructor() {
@@ -25,7 +25,7 @@ class Questions extends Component {
   }
 
   getQuestions() {
-    axios.get(`/api/getquestions/${this.props.quizToEdit.id}`).then((res) => {
+    api.get(`/api/getquestions/${this.props.quizToEdit._id}`,).then((res) => {
       this.setState({
         questions: res.data,
       });
@@ -33,7 +33,7 @@ class Questions extends Component {
   }
 
   deleteQuestion(id) {
-    axios.delete(`/api/deletequestion/${id}`).then((res) => {
+    api.delete(`/api/deletequestion/${id}`).then((res) => {
       this.getQuestions();
     });
   }
@@ -50,18 +50,18 @@ class Questions extends Component {
       toggle: !this.state.toggle,
     });
     if (newName && newInfo) {
-      axios
-        .put("/api/updatequiz", { newName, newInfo, id: quiz.id })
+      api
+        .put(`/api/updatequiz`, { newName, newInfo, id: quiz._id })
         .then((res) => {
-          this.handleUpdatedQuiz(quiz.id);
+          this.handleUpdatedQuiz(quiz._id);
         });
     } else {
       alert("All fields must be completed");
     }
   }
   handleUpdatedQuiz(id) {
-    axios.get(`/api/getquiz/${id}`).then((res) => {
-      this.props.editingQuiz(res.data[0]);
+    api.get(`/api/getquiz/${id}`).then((res) => {
+      this.props.editingQuiz(res.data);
       this.setState({
         quiz: this.props.quizToEdit,
       });
@@ -73,7 +73,7 @@ class Questions extends Component {
     if (questions) {
       var mappedQuestions = questions.map((question) => {
         return (
-          <div key={question.id} className="question-container">
+          <div key={question._id} className="question-container">
             <h1>{question.question}</h1>
             <ul>
               <li>1: {question.answer1}</li>
@@ -83,11 +83,11 @@ class Questions extends Component {
               <li>Correct: {question.correctanswer}</li>
             </ul>
             <div className="btn-container-edit">
-              <Link to={`/host/editquestion/${question.id}`}>
+              <Link to={`/host/editquestion/${question._id}`}>
                 <button className="btn-play">Edit</button>
               </Link>
               <button
-                onClick={() => this.deleteQuestion(question.id)}
+                onClick={() => this.deleteQuestion(question._id)}
                 className="btn-play"
               >
                 Delete
@@ -153,7 +153,7 @@ class Questions extends Component {
         <div className="question-edit-wrapper">
           <div className="add-quesiton-div">
             <Link
-              to={`/host/newquestion/${this.props.quizToEdit.id}`}
+              to={`/host/newquestion/${this.props.quizToEdit._id}`}
               className="btn-link"
             >
               <button className="btn-new" id="add-question-btn">

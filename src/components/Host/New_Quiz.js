@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import axios from "axios";
+import api from "../../service/api";
 import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { editingQuiz } from "../../Ducks/Reducer";
@@ -27,13 +27,13 @@ class New_Quiz extends Component {
     });
   }
   createQuiz() {
-    axios
+    api
       .post("/api/newquiz", {
         name: this.state.quiz_name,
         info: this.state.info,
       })
       .then((res) => {
-        this.props.editingQuiz(res.data[0]);
+        this.props.editingQuiz(res.data);
         this.setState({
           redirect: true,
         });

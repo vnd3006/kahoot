@@ -39,7 +39,7 @@ class Landing extends Component {
   handleGo() {
     this.props.handleNickname(this.state.nickname);
   }
-
+ 
   render() {
     return (
       <div className="component-container">
@@ -87,11 +87,9 @@ class Landing extends Component {
         )}
         <div className="logo-host">
           <img src={Kwizzard} alt="" className="kwizzard" />
-          <div className="btn-host">
-            <a id="atag" href="http://localhost:3030/auth">
-              HOST
-            </a>
-          </div>
+          <Link to="/login">
+            <button  className ="btn-enter">HOST</button>
+          </Link>
         </div>
       </div>
     );

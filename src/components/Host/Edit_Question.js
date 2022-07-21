@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../../service/api";
 import { Redirect } from "react-router-dom";
 import "./Host-New-Question.css";
 import "./Host-Question.css";
@@ -23,10 +23,10 @@ export default class Edit_Question extends Component {
     this.getQuestion();
   }
   getQuestion() {
-    axios.get(`/api/getquestion/${this.props.match.params.id}`).then((res) => {
-      let question = res.data[0];
+    api.get(`/api/getquestion/${this.props.match.params.id}`).then((res) => {
+      let question = res.data;
       this.setState({
-        id: question.id,
+        id: question._id,
         question: question.question,
         answer1: question.answer1,
         answer2: question.answer2,
@@ -49,7 +49,7 @@ export default class Edit_Question extends Component {
       correctAnswer &&
       id
     ) {
-      axios
+      api
         .put("/api/updatequestion", {
           question,
           answer1,

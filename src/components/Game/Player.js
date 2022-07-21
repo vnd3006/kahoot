@@ -20,11 +20,10 @@ class Player extends Component {
     this.submitAnswer = this.submitAnswer.bind(this);
   }
   componentDidMount() {
-    this.socket = io("/");
+    this.socket = io("http://localhost:3030",{ transports : ['websocket'] });
     this.socket.emit("player-joined", this.props.selectedPin);
     this.socket.emit("player-add", this.props);
     this.socket.on("room-joined", (data) => {
-      console.log("Quiz data: " + data);
     });
     this.socket.on("question-over", () => {
       this.setState({
@@ -32,7 +31,6 @@ class Player extends Component {
       });
     });
     this.socket.on("next-question", () => {
-      console.log("hit");
       this.setState({
         gameStarted: true,
         questionOver: false,
@@ -43,7 +41,7 @@ class Player extends Component {
     this.socket.on("sent-info", (data) => {
       this.setState({
         answeredCorrect: data.answeredCorrect,
-        score: this.state.score + data.score,
+        score: data.score,
       });
     });
   }
@@ -58,7 +56,7 @@ class Player extends Component {
     });
   }
   render() {
-    console.log(this.props);
+
     let { gameStarted, questionOver, answerSubmitted } = this.state;
     return (
       <div className="player-container">

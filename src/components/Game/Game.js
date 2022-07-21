@@ -1,9 +1,10 @@
-import React, { Component } from "react";
+import React, { Component, useEffect, useState } from "react";
 import axios from "axios";
 import io from "socket.io-client";
 import { connect } from "react-redux";
 import GameQuestions from "./Game_Questions";
 import GameQuestionOver from "./Game_Question_Over";
+import api from "../../service/api";
 
 class Game extends Component {
   constructor() {
@@ -22,25 +23,28 @@ class Game extends Component {
     };
     this.questionOver = this.questionOver.bind(this);
     this.nextQuestion = this.nextQuestion.bind(this);
+
   }
   componentDidMount() {
-    axios.get(`/api/getquestions/${this.props.quiz.id}`).then((res) => {
+    api.get(`/api/getquestions/${this.props.quiz._id}`,).then((res) => {
       this.setState({ questions: res.data });
-      console.log(this.questions);
     });
-    this.socket = io("/");
+    this.socket = io("http://localhost:3030",{ transports : ['websocket'] });
+
     this.generatePin();
+
     this.socket.on("room-joined", (data) => {
-      this.addPlayer(data.name, data.id);
-    });
+      this.addPlayer(data.name, data.id);});
+  
     this.socket.on("player-answer", (data) => {
       this.submitAnswer(data.name, data.answer);
     });
   }
+
   generatePin() {
     let newPin = Math.floor(Math.random() * 9000, 10000);
     this.setState({ pin: newPin });
-    this.socket.emit("host-join", { pin: newPin });
+    this.socket.emit("host-join", newPin);
   }
   startGame() {
     let { players } = this.state;
@@ -87,7 +91,7 @@ class Game extends Component {
         });
         players.forEach((player) => {
           if (player.answeredCorrect) {
-            player.score += internalTimer * 10 + 1000;
+            player.score += internalTimer * 5;
             this.socket.emit("sent-info", {
               id: player.id,
               score: player.score,
@@ -95,7 +99,7 @@ class Game extends Component {
             });
           }
         });
-        pAnswered === players.length ? (internalTimer = 0) : null;
+        // pAnswered === players.length ? (internalTimer = 0) : null;
         internalTimer -= 1;
       };
       let endQuestion = () => {
@@ -131,7 +135,6 @@ class Game extends Component {
     };
     let newPlayers = [...this.state.players];
     newPlayers.push(player);
-    // console.log(newPlayers)
     this.setState({
       players: newPlayers,
       playerCounter: this.state.playerCounter + 1,
@@ -143,9 +146,8 @@ class Game extends Component {
     let updatedPlayers = this.state.players.filter(
       (player) => player.name !== name
     );
-
     player[0].qAnswered = true;
-    answer === this.state.questions[this.state.currentQuestion].correctanswer
+    answer === this.state.questions[this.state.currentQuestion].correctAnswer
       ? (player[0].answeredCorrect = true)
       : (player[0].answeredCorrect = false);
 
@@ -158,14 +160,12 @@ class Game extends Component {
   getLeaderBoard() {
     let unsorted = [...this.state.players];
     let leaderboard = unsorted.sort((a, b) => b.score - a.score);
-    console.log(leaderboard);
     this.setState({
       leaderBoard: leaderboard,
     });
   }
 
   render() {
-    console.log(this.state);
     let { pin, questions, currentQuestion, isLive, questionOver, gameOver } =
       this.state;
     let mappedPlayers = this.state.players.map((player) => {

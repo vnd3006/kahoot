@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../../service/api";
 import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { selectedQuiz, editingQuiz } from "../../Ducks/Reducer";
@@ -13,6 +13,7 @@ class Main extends Component {
     this.state = {
       quizzes: [],
       redirect: false,
+      forbidden: false,
     };
     this.setRedirect = this.setRedirect.bind(this);
   }
@@ -20,21 +21,26 @@ class Main extends Component {
     this.getQuizzes();
   }
   getQuizzes() {
-    axios.get(`/api/getQuizzes`).then((res) => {
+    api.get(`/api/getQuizzes`,).then((res) => {
       this.setState({
         quizzes: res.data,
       });
-    });
+    })
+    .catch(err =>{
+      this.setState({
+        forbidden: true,
+      }
+      )
+    })
   }
   setRedirect(e) {
     this.props.selectedQuiz(e);
-
     this.setState({
       redirect: true,
     });
   }
   deleteQuiz(id) {
-    axios.delete(`/api/deletequiz/${id}`).then((res) => {
+    api.delete(`/api/deletequiz/${id}`).then((res) => {
       if (res.status === 200) {
         this.getQuizzes();
       } else {
@@ -44,6 +50,9 @@ class Main extends Component {
   }
 
   render() {
+    if(this.state.forbidden){
+      return <Redirect to="/login"/>
+    }
     if (this.state.redirect) {
       return <Redirect to="/game" />;
     }
@@ -58,7 +67,7 @@ class Main extends Component {
               Play
             </button>
             <button
-              onClick={() => this.deleteQuiz(quiz.id)}
+              onClick={() => this.deleteQuiz(quiz._id)}
               className="btn-play"
             >
               Delete
