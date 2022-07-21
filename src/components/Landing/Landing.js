@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { handleNickname, selectedPin } from "../../Ducks/Reducer";
 import "./Landing.css";
-import Kwizz from "../../Assests/Kwizz.svg";
-import Kwizzard from "../../Assests/Kwizzard--test-pixel.svg";
+import Kwizz from "../../Assests/Kahoot_Logo.svg.png";
+import Kwizzard from "../../Assests/Kahoot_Logo.svg.png";
 import Stars from "../animations/Stars.js";
 
 class Landing extends Component {
@@ -55,7 +55,7 @@ class Landing extends Component {
               <input
                 type="number"
                 value={this.state.pin}
-                placeholder="Kwizz! PIN"
+                placeholder="Game PIN"
                 onChange={this.handleInput}
                 className="input-user"
               />
@@ -85,13 +85,12 @@ class Landing extends Component {
             </div>
           </div>
         )}
-        <div className="logo-host">
-          <img src={Kwizzard} alt="" className="kwizzard" />
-          <Link to="/login">
-            <button  className ="btn-enter">HOST</button>
+        {/* <div className="logo-host"> */}
+          <Link to="/host">
+            <button  className ="btn-host">HOST</button>
           </Link>
         </div>
-      </div>
+      // </div>
     );
   }
 }

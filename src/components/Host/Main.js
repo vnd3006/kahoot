@@ -5,7 +5,9 @@ import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { selectedQuiz, editingQuiz } from "../../Ducks/Reducer";
 import "./Host.css";
-import Kwizz from "../../Assests/Kwizz.svg";
+import Kwizz from "../../Assests/Kahoot_Logo.svg.png";
+import authService from "../../service/auth.service";
+
 
 
 function Main(props) {
@@ -41,11 +43,13 @@ function Main(props) {
     });
   };
 
-
+  const handleLogout = ()=>{
+    authService.logout();
+  }
   let mappedQuizzes = quizzes.map((quiz) => {
     return (
       <div key={quiz.id} className="kwizz-container">
-        <h1 className="kwizz-info kwizz-title">{quiz.quiz_name}</h1>
+        <h1 className="kwizz-info kwizz-title">{quiz.quizName}</h1>
         <p className="kwizz-info kwizz-desc">{quiz.info}</p>
         <div className="btn-container">
           <button onClick={() => setRedirect(quiz)} className="btn-play">
@@ -66,18 +70,25 @@ function Main(props) {
       </div>
     );
   });
- 
+ if(forbidden == true){
+  return <Redirect to="/login"/>
+ }
 
   return canRedirect ? (
     <Redirect to="/game" />
   ) : (
     <div className="mapped-container">
+      <div className="btn-done-div">
+            <Link to="/">
+              <button className="btn-play btn-done" onClick={handleLogout}>Log out</button>
+            </Link>
+          </div>
       <div className="host-logo-container">
         <img src={Kwizz} alt="kwizz logo" className="logo" />
       </div>
       <div className="newKwizz">
         <Link to="/host/newquiz" className="btn-link">
-          <button className="btn-new">New Kwizz!</button>
+          <button className="btn-new">New Quiz!</button>
         </Link>
       </div>
       <div className="mapped-Kwizzes-container">{mappedQuizzes}</div>

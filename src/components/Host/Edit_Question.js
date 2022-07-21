@@ -40,6 +40,12 @@ export default function Edit_Question(props) {
     });
   };
 
+  const changeHandler = (e) =>
+    setQuestionInfo({
+      ...questionInfo,
+      [e.target.name]: e.target.value,
+    });
+
   const updateQuestion = () => {
     let { question, answer1, answer2, answer3, answer4, correctAnswer, id } =
       questionInfo;
@@ -82,66 +88,62 @@ export default function Edit_Question(props) {
     <Redirect to="/host/questions" />
   ) : (
     <div className="mapped-container">
-      <Link to="/host/questions" className="btn-link">
-        go back
+      <div className="btn-goBack">
+        <Link to="/host/questions" className="btn-container">
+        <button className="btn-play">Go back</button>
       </Link>
+      </div>
       <div className="new-q">
         <label>Question</label>
-        <input
+        <textarea
+          rows={5}
+          className="ml4"
           value={questionInfo.question}
-          onChange={(e) =>
-            setQuestionInfo((prevState) => {
-              return { ...prevState, question: e.target.value };
-            })
-          }
+          name="question"
+          onChange={changeHandler}
         />
       </div>
-      <br />
       <div className="new-q">
         <label>Answer1</label>
-        <input
+        <textarea
+          rows={3}
+          className="ml4"
           value={questionInfo.answer1}
-          onChange={(e) =>
-            setQuestionInfo((prevState) => {
-              return { ...prevState, asnwer1: e.target.value };
-            })
-          }
+          name="answer1"
+          onChange={changeHandler}
         />
       </div>
       <br />
       <div className="new-q">
         <label>Answer2</label>
-        <input
-          value={questionInfo.asnwer2}
-          onChange={(e) =>
-            setQuestionInfo((prevState) => {
-              return { ...prevState, asnwer2: e.target.value };
-            })
-          }
+        <textarea
+          rows={3}
+          className="ml4"
+          value={questionInfo.answer2}
+          name="answer2"
+          onChange={changeHandler}
         />
       </div>
       <br />
       <div className="new-q">
         <label>Answer3</label>
-        <input
+        <textarea
+          rows={3}
+          className="ml4"
           value={questionInfo.answer3}
-          onChange={(e) =>
-            setQuestionInfo((prevState) => {
-              return { ...prevState, asnwer3: e.target.value };
-            })
-          }
+          name="answer3"
+          onChange={changeHandler}
         />
       </div>
       <br />
       <div className="new-q">
         <label>Answer4</label>
-        <input
+        <textarea
+          rows={3}
+          className="ml4"
           value={questionInfo.answer4}
-          onChange={(e) =>
-            setQuestionInfo((prevState) => {
-              return { ...prevState, asnwer4: e.target.value };
-            })
-          }
+          name="answer4"
+          onChange={changeHandler}
         />
       </div>
       <br />
@@ -150,11 +152,8 @@ export default function Edit_Question(props) {
         <input
           type="number"
           value={questionInfo.correctAnswer}
-          onChange={(e) =>
-            setQuestionInfo((prevState) => {
-              return { ...prevState, correctAnswer: e.target.value };
-            })
-          }
+          name="correctAnswer"
+          onChange={changeHandler}
         />
         <button onClick={updateQuestion}>Update</button>
       </div>

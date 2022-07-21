@@ -1,13 +1,13 @@
-import React,{ Component } from "react";
+import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 import authService from "../../service/auth.service";
-import './Login.css'
+import "./Login.css";
 
-class Login extends Component{
-  constructor(){
-    super();   
-    this.state ={
+class Login extends Component {
+  constructor() {
+    super();
+    this.state = {
       username: "",
       password: "",
       redirect: false,
@@ -16,61 +16,81 @@ class Login extends Component{
     this.handleInputPassword = this.handleInputPassword.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-  handleInputUsername(e){
+  handleInputUsername(e) {
     this.setState({
-      username: e.target.value
+      username: e.target.value,
     });
   }
 
-  handleInputPassword(e){
+  handleInputPassword(e) {
     this.setState({
-      password: e.target.value
+      password: e.target.value,
     });
   }
 
-  handleSubmit(e){
+  handleSubmit(e) {
     e.preventDefault();
 
-    authService.login(this.state.username,this.state.password).then(
-      (res)=>{
-        if(res.authenticated == true){
-          this.setState({
-            redirect: true,
-          });
-        }
+    authService.login(this.state.username, this.state.password).then((res) => {
+      if (res.authenticated == true) {
+        this.setState({
+          redirect: true,
+        });
       }
-    )
+    });
   }
-  render(){
+  render() {
     if (this.state.redirect) {
       return <Redirect to="/host" />;
     }
-    return(
+    return (
       <div className="component-container">
+        <div className="btn-done-div">
+          <Link to="/">
+            <button className="btn-play btn-done">HOME</button>
+          </Link>
+        </div>
         <div className="form">
           <form onSubmit={this.handleSubmit}>
-              <div>
-                  <label htmlFor="username" className="text-label">Username</label>
-                  <input type="text" id="username"
-                  onChange={this.handleInputUsername}
-                  className='input'/>
-              </div>
-              <div>
-                  <label htmlFor="password" className="text-label">Password</label>
-                  <input type="password" id="password"
-                  onChange={this.handleInputPassword}
-                  className= 'input'/>
-              </div>
-              <div>
-                  <button type="submit" className="btn-enter">Login</button>
-              </div>
+            <div>
+              <label htmlFor="username" className="text-label">
+                Username
+              </label>
+              <input
+                type="text"
+                id="username"
+                onChange={this.handleInputUsername}
+                className="input"
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="text-label">
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                onChange={this.handleInputPassword}
+                className="input"
+              />
+            </div>
+            <div>
+              <button type="submit" className="btn-enter">
+                Login
+              </button>
+          <div>
+            <Link to='/register'>
+            <button  className="btn-enter">
+                Register
+              </button>
+            </Link>
+          </div>
+            </div>
           </form>
-          
         </div>
       </div>
-    )
+    );
   }
 }
 
-
-export default connect(null,{})(Login);
+export default connect(null, {})(Login);

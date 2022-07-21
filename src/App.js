@@ -9,6 +9,7 @@ import New_Question from "./components/Host/New_Question";
 import Player from "./components/Game/Player";
 import Edit_Question from "./components/Host/Edit_Question";
 import Login from "./components/login/Login"
+import Register from "./components/login/Register";
 import "./App.css";
 import "./reset.css";
 
@@ -27,6 +28,8 @@ class App extends Component {
             <Route path="/host/editquestion/:id" component={Edit_Question} />
             <Route path="/player" component={Player} />
             <Route path="/login" component={Login} />
+            <Route path="/register" component={Register} />
+            
           </Switch>
         </BrowserRouter>
       </div>

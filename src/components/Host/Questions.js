@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 
 import { Link } from "react-router-dom";
@@ -6,7 +5,7 @@ import { connect } from "react-redux";
 import { editingQuiz } from "../../Ducks/Reducer";
 import "./Host-Question.css";
 import "./Host.css";
-import api from "../../service/api"
+import api from "../../service/api";
 
 function Questions(props) {
   const [questions, setQuestions] = useState([]);
@@ -17,6 +16,8 @@ function Questions(props) {
 
   useEffect(() => {
     setQuiz(props.quizToEdit);
+    setNewName(props.quizToEdit.quizName);
+    setNewInfo(props.quizToEdit.info);
     getQuestions();
   }, []);
 
@@ -27,9 +28,9 @@ function Questions(props) {
   };
 
   const deleteQuestion = (id) => {
+    console.log('delete ',id)
     api.delete(`/api/deletequestion/${id}`).then((res) => {
       getQuestions();
-
     });
   };
 
@@ -43,15 +44,15 @@ function Questions(props) {
       api
         .put(`/api/updatequiz`, { newName, newInfo, id: quiz._id })
         .then((res) => {
-
+          setNewName(newName);
+          setNewInfo(newInfo);
           handleUpdatedQuiz(quiz._id);
-
         });
     } else {
       alert("All fields must be completed");
     }
   };
-
+  console.log('----',quiz.quizName)
   const handleUpdatedQuiz = (id) => {
     api.get(`/api/getquiz/${id}`).then((res) => {
       props.editingQuiz(res.data);
@@ -98,9 +99,18 @@ function Questions(props) {
             </Link>
           </div>
           <div className="kwizz-container-edit">
-            <h1 className="kwizz-title">{quiz.quiz_name}</h1>
+           <div> {newName != "" ? (
+              <h1 className="kwizz-title">{newName}</h1>
+            ) : (
+              <h1 className="kwizz-title">{quiz.quizName}</h1>
+            )}</div>
             <br />
-            <p className="kwizz-info kwizz-desc">{quiz.info}</p>
+            {newInfo != "" ? (
+              <p className="kwizz-info kwizz-desc">{newInfo}</p>
+            ) : (
+              <p className="kwizz-info kwizz-desc">{quiz.info}</p>
+            )}
+
             <div className="btn-update">
               <button onClick={displayEdit} className="btn-play">
                 Update
@@ -119,7 +129,7 @@ function Questions(props) {
             {/* <h1 className='kwizz-title'>{this.state.quiz.quiz_name}</h1>
                         <p className='kwizz-info kwizz-desc'>{this.state.quiz.info}</p> */}
             <input
-              placeholder={quiz.quiz_name}
+              placeholder={quiz.quizName}
               onChange={(e) => setNewName(e.target.value)}
               className="title-input input-edit "
             />

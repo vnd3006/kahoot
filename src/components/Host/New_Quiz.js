@@ -42,7 +42,7 @@ function New_Quiz(props) {
   return (
     <div className="mapped-container">
       <div className="new-kwizz-form">
-        <label className="kwizz-desc kwizz-info">New Kwizz Title</label>
+        <label className="kwizz-desc kwizz-info">New Quiz Title</label>
         <input className="title-input" onChange={handleInput} type="text" />
         <label className="kwizz-desc kwizz-info">Description</label>
         <textarea className="desc-input" onChange={handleTextarea}></textarea>

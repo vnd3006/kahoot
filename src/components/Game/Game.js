@@ -158,6 +158,7 @@ class Game extends Component {
   }
 
   getLeaderBoard() {
+    console.log('get lederboad')
     let unsorted = [...this.state.players];
     let leaderboard = unsorted.sort((a, b) => b.score - a.score);
     this.setState({

@@ -49,7 +49,6 @@ export default function New_Question(props) {
       alert("All fields must be completed");
     }
   };
-  console.log('qqqqqqqqq',questionInfo)
   if (questionInfo.redirect) {
     return <Redirect to="/host/questions" />;
   }
@@ -63,13 +62,15 @@ export default function New_Question(props) {
     // I decided to just use arrow functions here instead of binding all of this at the top - Nate
     <div className="background">
       <Link to="/host/questions" className="btn-go-back">
-        go back pls 
+        <button className="btn-play">Go back</button>
       </Link>
       <br />
       <div className="new-question-wrapper">
         <div className="new-q">
           <label>Question</label>
-          <input
+          <textarea
+          className="ml4"
+          rows={5}
             name="question"
             onChange={changeHandler}
           />
@@ -77,7 +78,9 @@ export default function New_Question(props) {
 
         <div className="new-q">
           <label>Answer1</label>
-          <input
+          <textarea
+          className="ml4"
+          rows={3}
           name="answer1"
           onChange={changeHandler}
             height="100"
@@ -85,21 +88,27 @@ export default function New_Question(props) {
         </div>
         <div className="new-q">
           <label>Answer2</label>
-          <input
+          <textarea
+          className="ml4"
+          rows={3}
           name="answer2"
           onChange={changeHandler}
           />
         </div>
         <div className="new-q">
           <label>Answer3</label>
-          <input
+          <textarea
+          className="ml4"
+          rows={3}
             name="answer3"
             onChange={changeHandler}
           />
         </div>
         <div className="new-q">
           <label>Answer4</label>
-          <input
+          <textarea
+          className="ml4"
+          rows={3}
             name="answer4"
             onChange={changeHandler}
           />
@@ -107,6 +116,7 @@ export default function New_Question(props) {
         <div className="new-q">
           <label>Correct answer</label>
           <input
+          className="ml4"
             type="number"
             min="1"
             max="4"
