@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../../service/api";
 import { Redirect } from "react-router-dom";
@@ -7,97 +7,82 @@ import { selectedQuiz, editingQuiz } from "../../Ducks/Reducer";
 import "./Host.css";
 import Kwizz from "../../Assests/Kwizz.svg";
 
-class Main extends Component {
-  constructor() {
-    super();
-    this.state = {
-      quizzes: [],
-      redirect: false,
-      forbidden: false,
-    };
-    this.setRedirect = this.setRedirect.bind(this);
-  }
-  componentDidMount() {
-    this.getQuizzes();
-  }
-  getQuizzes() {
-    api.get(`/api/getQuizzes`,).then((res) => {
-      this.setState({
-        quizzes: res.data,
-      });
-    })
-    .catch(err =>{
-      this.setState({
-        forbidden: true,
-      }
-      )
-    })
-  }
-  setRedirect(e) {
-    this.props.selectedQuiz(e);
-    this.setState({
-      redirect: true,
+
+function Main(props) {
+  const [quizzes, setQuizzes] = useState([]);
+  const [canRedirect, setCanRedirect] = useState(false);
+  const [forbidden, setforbidden] = useState(false);
+
+  useEffect(() => {
+    getQuizzes();
+  }, []);
+
+  const getQuizzes = () => {
+    api.get(`/api/getQuizzes`).then((res) => {
+      setQuizzes([...res.data]);
+    }).catch(err =>{
+      setforbidden(true);
     });
-  }
-  deleteQuiz(id) {
+  };
+
+  const setRedirect = (e) => {
+    props.selectedQuiz(e);
+
+    setCanRedirect(true);
+  };
+
+  const deleteQuiz = (id) => {
     api.delete(`/api/deletequiz/${id}`).then((res) => {
       if (res.status === 200) {
-        this.getQuizzes();
+        getQuizzes();
       } else {
         alert("Something went wrong :(");
       }
     });
-  }
+  };
 
-  render() {
-    if(this.state.forbidden){
-      return <Redirect to="/login"/>
-    }
-    if (this.state.redirect) {
-      return <Redirect to="/game" />;
-    }
-    let { quizzes } = this.state;
-    let mappedQuizzes = quizzes.map((quiz) => {
-      return (
-        <div key={quiz.id} className="kwizz-container">
-          <h1 className="kwizz-info kwizz-title">{quiz.quiz_name}</h1>
-          <p className="kwizz-info kwizz-desc">{quiz.info}</p>
-          <div className="btn-container">
-            <button onClick={() => this.setRedirect(quiz)} className="btn-play">
-              Play
-            </button>
+
+  let mappedQuizzes = quizzes.map((quiz) => {
+    return (
+      <div key={quiz.id} className="kwizz-container">
+        <h1 className="kwizz-info kwizz-title">{quiz.quiz_name}</h1>
+        <p className="kwizz-info kwizz-desc">{quiz.info}</p>
+        <div className="btn-container">
+          <button onClick={() => setRedirect(quiz)} className="btn-play">
+            Play
+          </button>
+          <button onClick={() => deleteQuiz(quiz._id)} className="btn-play">
+            Delete
+          </button>
+          <Link to="/host/questions">
             <button
-              onClick={() => this.deleteQuiz(quiz._id)}
+              onClick={() => props.editingQuiz(quiz)}
               className="btn-play"
             >
-              Delete
+              Edit
             </button>
-            <Link to="/host/questions">
-              <button
-                onClick={() => this.props.editingQuiz(quiz)}
-                className="btn-play"
-              >
-                Edit
-              </button>
-            </Link>
-          </div>
-        </div>
-      );
-    });
-    return (
-      <div className="mapped-container">
-        <div className="host-logo-container">
-          <img src={Kwizz} alt="kwizz logo" className="logo" />
-        </div>
-        <div className="newKwizz">
-          <Link to="/host/newquiz" className="btn-link">
-            <button className="btn-new">New Kwizz!</button>
           </Link>
         </div>
-        <div className="mapped-Kwizzes-container">{mappedQuizzes}</div>
       </div>
     );
-  }
+  });
+ 
+
+  return canRedirect ? (
+    <Redirect to="/game" />
+  ) : (
+    <div className="mapped-container">
+      <div className="host-logo-container">
+        <img src={Kwizz} alt="kwizz logo" className="logo" />
+      </div>
+      <div className="newKwizz">
+        <Link to="/host/newquiz" className="btn-link">
+          <button className="btn-new">New Kwizz!</button>
+        </Link>
+      </div>
+      <div className="mapped-Kwizzes-container">{mappedQuizzes}</div>
+    </div>
+  );
 }
 
 export default connect(null, { selectedQuiz, editingQuiz })(Main);

@@ -1,4 +1,6 @@
-import React, { Component } from "react";
+
+import React, { useState, useEffect } from "react";
+
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { editingQuiz } from "../../Ducks/Reducer";
@@ -6,168 +8,155 @@ import "./Host-Question.css";
 import "./Host.css";
 import api from "../../service/api"
 
-class Questions extends Component {
-  constructor() {
-    super();
-    this.state = {
-      questions: [],
-      quiz: {},
-      newName: "",
-      newInfo: "",
-      toggle: false,
-    };
-  }
-  componentDidMount() {
-    this.setState({
-      quiz: this.props.quizToEdit,
-    });
-    this.getQuestions();
-  }
+function Questions(props) {
+  const [questions, setQuestions] = useState([]);
+  const [quiz, setQuiz] = useState({});
+  const [newName, setNewName] = useState("");
+  const [newInfo, setNewInfo] = useState("");
+  const [toggle, setToggle] = useState(false);
 
-  getQuestions() {
-    api.get(`/api/getquestions/${this.props.quizToEdit._id}`,).then((res) => {
-      this.setState({
-        questions: res.data,
-      });
-    });
-  }
+  useEffect(() => {
+    setQuiz(props.quizToEdit);
+    getQuestions();
+  }, []);
 
-  deleteQuestion(id) {
+  const getQuestions = () => {
+    api.get(`/api/getquestions/${props.quizToEdit._id}`).then((res) => {
+      setQuestions(res.data);
+    });
+  };
+
+  const deleteQuestion = (id) => {
     api.delete(`/api/deletequestion/${id}`).then((res) => {
-      this.getQuestions();
-    });
-  }
+      getQuestions();
 
-  displayEdit() {
-    this.setState({
-      toggle: !this.state.toggle,
     });
-  }
+  };
 
-  updateQuiz() {
-    let { newName, newInfo, quiz } = this.state;
-    this.setState({
-      toggle: !this.state.toggle,
-    });
+  const displayEdit = () => {
+    setToggle((prevState) => !prevState);
+  };
+
+  const updateQuiz = () => {
+    setToggle((prevState) => !prevState);
     if (newName && newInfo) {
       api
         .put(`/api/updatequiz`, { newName, newInfo, id: quiz._id })
         .then((res) => {
-          this.handleUpdatedQuiz(quiz._id);
+
+          handleUpdatedQuiz(quiz._id);
+
         });
     } else {
       alert("All fields must be completed");
     }
-  }
-  handleUpdatedQuiz(id) {
+  };
+
+  const handleUpdatedQuiz = (id) => {
     api.get(`/api/getquiz/${id}`).then((res) => {
-      this.props.editingQuiz(res.data);
-      this.setState({
-        quiz: this.props.quizToEdit,
-      });
+      props.editingQuiz(res.data);
+      setQuiz(props.quizToEdit);
+    });
+  };
+
+  let mappedQuestions;
+  if (questions) {
+    mappedQuestions = questions.map((question) => {
+      return (
+        <div key={question.id} className="question-container">
+          <h1>{question.question}</h1>
+          <ul>
+            <li>1: {question.answer1}</li>
+            <li>2: {question.answer2}</li>
+            <li>3: {question.answer3}</li>
+            <li>4: {question.answer4}</li>
+            <li>Correct: {question.correctAnswer}</li>
+          </ul>
+          <div className="btn-container-edit">
+            <Link to={`/host/editquestion/${question._id}`}>
+              <button className="btn-play">Edit</button>
+            </Link>
+            <button
+              onClick={() => deleteQuestion(question._id)}
+              className="btn-play"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      );
     });
   }
 
-  render() {
-    let { questions } = this.state;
-    if (questions) {
-      var mappedQuestions = questions.map((question) => {
-        return (
-          <div key={question._id} className="question-container">
-            <h1>{question.question}</h1>
-            <ul>
-              <li>1: {question.answer1}</li>
-              <li>2: {question.answer2}</li>
-              <li>3: {question.answer3}</li>
-              <li>4: {question.answer4}</li>
-              <li>Correct: {question.correctanswer}</li>
-            </ul>
-            <div className="btn-container-edit">
-              <Link to={`/host/editquestion/${question._id}`}>
-                <button className="btn-play">Edit</button>
-              </Link>
-              <button
-                onClick={() => this.deleteQuestion(question._id)}
-                className="btn-play"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        );
-      });
-    }
-
-    return (
-      <div className="mapped-container">
-        {!this.state.toggle ? (
-          <div className="toggle-container">
-            <div className="btn-done-div">
-              <Link to="/host">
-                <button className="btn-play btn-done">Done</button>
-              </Link>
-            </div>
-            <div className="kwizz-container-edit">
-              <h1 className="kwizz-title">{this.state.quiz.quiz_name}</h1>
-              <br />
-              <p className="kwizz-info kwizz-desc">{this.state.quiz.info}</p>
-              <div className="btn-update">
-                <button onClick={() => this.displayEdit()} className="btn-play">
-                  Update
-                </button>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="toggle-container">
-            <div className="btn-done-div">
-              <Link to="/host">
-                <button className="btn-play btn-done">Done</button>
-              </Link>
-            </div>
-            <div className="kwizz-container-edit">
-              {/* <h1 className='kwizz-title'>{this.state.quiz.quiz_name}</h1>
-                        <p className='kwizz-info kwizz-desc'>{this.state.quiz.info}</p> */}
-              <input
-                placeholder={this.state.quiz.quiz_name}
-                onChange={(e) => this.setState({ newName: e.target.value })}
-                className="title-input input-edit "
-              />
-              <br />
-              <textarea
-                placeholder={this.state.quiz.info}
-                onChange={(e) => this.setState({ newInfo: e.target.value })}
-                className="desc-input input-edit"
-              ></textarea>
-              <div className="btn-container-edit">
-                <button onClick={() => this.updateQuiz()} className="btn-play">
-                  Save
-                </button>
-                <button onClick={() => this.displayEdit()} className="btn-play">
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-        <div className="question-edit-wrapper">
-          <div className="add-quesiton-div">
-            <Link
-              to={`/host/newquestion/${this.props.quizToEdit._id}`}
-              className="btn-link"
-            >
-              <button className="btn-new" id="add-question-btn">
-                Add Question
-              </button>
+  return (
+    <div className="mapped-container">
+      {!toggle ? (
+        <div className="toggle-container">
+          <div className="btn-done-div">
+            <Link to="/host">
+              <button className="btn-play btn-done">Done</button>
             </Link>
           </div>
-          <br />
-          <br />
-          <div className="mapped-questions">{mappedQuestions}</div>
+          <div className="kwizz-container-edit">
+            <h1 className="kwizz-title">{quiz.quiz_name}</h1>
+            <br />
+            <p className="kwizz-info kwizz-desc">{quiz.info}</p>
+            <div className="btn-update">
+              <button onClick={displayEdit} className="btn-play">
+                Update
+              </button>
+            </div>
+          </div>
         </div>
+      ) : (
+        <div className="toggle-container">
+          <div className="btn-done-div">
+            <Link to="/host">
+              <button className="btn-play btn-done">Done</button>
+            </Link>
+          </div>
+          <div className="kwizz-container-edit">
+            {/* <h1 className='kwizz-title'>{this.state.quiz.quiz_name}</h1>
+                        <p className='kwizz-info kwizz-desc'>{this.state.quiz.info}</p> */}
+            <input
+              placeholder={quiz.quiz_name}
+              onChange={(e) => setNewName(e.target.value)}
+              className="title-input input-edit "
+            />
+            <br />
+            <textarea
+              placeholder={quiz.info}
+              onChange={(e) => setNewInfo(e.target.value)}
+              className="desc-input input-edit"
+            ></textarea>
+            <div className="btn-container-edit">
+              <button onClick={updateQuiz} className="btn-play">
+                Save
+              </button>
+              <button onClick={displayEdit} className="btn-play">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      <div className="question-edit-wrapper">
+        <div className="add-quesiton-div">
+          <Link
+            to={`/host/newquestion/${props.quizToEdit._id}`}
+            className="btn-link"
+          >
+            <button className="btn-new" id="add-question-btn">
+              Add Question
+            </button>
+          </Link>
+        </div>
+        <br />
+        <br />
+        <div className="mapped-questions">{mappedQuestions}</div>
       </div>
-    );
-  }
+    </div>
+  );
 }
 function mapStateToProps(state) {
   return {
