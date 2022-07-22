@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import api from "../../service/api";
+import React, { useState } from "react";
+import apiWithFile from "../../service/apiWithFile";
 import { Redirect } from "react-router-dom";
 import { Link } from "react-router-dom";
 import "./Host-New-Question.css";
@@ -15,24 +15,26 @@ export default function New_Question(props) {
     answer4: "",
     correctAnswer: "",
     redirect: false,
+    image:null
   });
   
 
   const addQuestion = () => {
-    let { question, answer1, answer2, answer3, answer4, correctAnswer } =
+    let { question, answer1, answer2, answer3, answer4, correctAnswer,image } =
       questionInfo;
     let { id } = props.match.params;
     if (question && answer1 && answer2 && answer3 && answer4 && correctAnswer) {
-      api
-        .post("/api/newquestion", {
-          question,
-          answer1,
-          answer2,
-          answer3,
-          answer4,
-          correctAnswer,
-          id,
-        })
+      var data=new FormData()
+      data.append('question', question)
+      data.append('answer1', answer1)
+      data.append('answer2', answer2)
+      data.append('answer3', answer3)
+      data.append('answer4', answer4)
+      data.append('correctAnswer', correctAnswer)
+      if (image) data.append('image', image)
+      data.append('id', id)
+      apiWithFile
+        .post("/api/newquestion",data)
         .then((res) => {
           if (res.status === 200) {
             setQuestionInfo((prevState) => {
@@ -53,10 +55,19 @@ export default function New_Question(props) {
     return <Redirect to="/host/questions" />;
   }
 
-  const changeHandler = (e) => setQuestionInfo({
-    ... questionInfo, 
-    [e.target.name] : e.target.value
-  })
+  const changeHandler = (e) => {
+    if (e.target.name!='image')
+      {setQuestionInfo({
+      ... questionInfo, 
+      [e.target.name] : e.target.value
+    })}
+    else {
+      setQuestionInfo({
+        ... questionInfo, 
+        [e.target.name] : e.target.files[0]
+      })
+    }
+  }
 
   return (
     // I decided to just use arrow functions here instead of binding all of this at the top - Nate
@@ -74,6 +85,15 @@ export default function New_Question(props) {
             name="question"
             onChange={changeHandler}
           />
+        </div>
+
+        <div className="new-q">
+          <label>Image</label>
+          <input className="ml4" 
+          type="file" 
+          accept="image/x-png,image/jpeg,image/gif" 
+          onChange={changeHandler} 
+          name="image" id="image"/>
         </div>
 
         <div className="new-q">

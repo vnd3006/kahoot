@@ -5,7 +5,7 @@ const instance = axios.create({
   baseURL: "http://localhost:3030",
   
   headers: {
-    "Content-Type": "application/json",
+    "Content-Type": "multipart/form-data",
   },
 });
 
@@ -34,7 +34,7 @@ instance.interceptors.response.use(
     return res;
   },
   async (err) => {
-    console.log('Error ',err);
+    console.log('Error: ',err);
     const originalConfig = err.config;
 
     if (err.response) {
