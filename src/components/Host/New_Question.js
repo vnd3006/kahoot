@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import api from "../../service/api";
+import React, { useState } from "react";
 import apiWithFile from "../../service/apiWithFile";
 import { Redirect } from "react-router-dom";
 import { Link } from "react-router-dom";

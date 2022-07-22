@@ -1,7 +1,5 @@
 import axios from "axios";
 import TokenService from "./token.service";
-import AuthService from "./auth.service";
-import { useNavigate } from "react-router-dom";
 
 const instance = axios.create({
   baseURL: "http://localhost:3030",
@@ -36,16 +34,13 @@ instance.interceptors.response.use(
     return res;
   },
   async (err) => {
-    console.log('errrrrrrrrrr 39-api: ',err);
+    console.log('Error ',err);
     const originalConfig = err.config;
-
-
 
     if (err.response) {
       // access token expired
       if (err.response.status === 401 && err.response.data.message!="refreshToken is revoked!"&& !originalConfig._retry) {
         // handle infinite loop
-       console.log('48api ');
         originalConfig._retry = true;
 
         try {
@@ -53,14 +48,12 @@ instance.interceptors.response.use(
             accessToken: TokenService.getLocalAccessToken(),
             refreshToken: TokenService.getLocalRefreshToken(),
           });
-          console.log('sssssssssss-- ',rs.data)
 
           const { accessToken } = rs.data;
           TokenService.updateNewAccessToken(accessToken);
 
           return instance(originalConfig);
         } catch (_error) {
-          console.log('sqqqqqqqqqqqqqqqqqqqq')
           return Promise.reject(_error);
         }
       }

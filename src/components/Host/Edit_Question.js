@@ -1,7 +1,7 @@
-import React, { Component, useState, useEffect } from "react";
+import React, {  useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import api from "../../service/api";
 import apiWithFile from "../../service/apiWithFile";
+import api from "../../service/api";
 import { Redirect } from "react-router-dom";
 import "./Host-New-Question.css";
 import "./Host-Question.css";
@@ -77,7 +77,7 @@ export default function Edit_Question(props) {
       data.append('correctAnswer', correctAnswer)
       if (image) data.append('image', image)
       data.append('id', id)
-      api
+      apiWithFile
         .put("/api/updatequestion", data)
         .then((res) => {
           if (res.status === 200) {
