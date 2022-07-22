@@ -1,6 +1,7 @@
 import React, { Component, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../../service/api";
+import apiWithFile from "../../service/apiWithFile";
 import { Redirect } from "react-router-dom";
 import "./Host-New-Question.css";
 import "./Host-Question.css";
@@ -15,6 +16,7 @@ export default function Edit_Question(props) {
     answer3: "",
     answer4: "",
     correctAnswer: "",
+    image:null,
     redirect: false,
   });
 
@@ -40,14 +42,22 @@ export default function Edit_Question(props) {
     });
   };
 
-  const changeHandler = (e) =>
-    setQuestionInfo({
-      ...questionInfo,
-      [e.target.name]: e.target.value,
-    });
+  const changeHandler = (e) =>{
+    if (e.target.name!='image')
+      {setQuestionInfo({
+      ... questionInfo, 
+      [e.target.name] : e.target.value
+    })}
+    else {
+      setQuestionInfo({
+        ... questionInfo, 
+        [e.target.name] : e.target.files[0]
+      })
+    }
+  }
 
   const updateQuestion = () => {
-    let { question, answer1, answer2, answer3, answer4, correctAnswer, id } =
+    let { question, answer1, answer2, answer3, answer4, correctAnswer, id,image } =
       questionInfo;
     if (
       question &&
@@ -58,16 +68,17 @@ export default function Edit_Question(props) {
       correctAnswer &&
       id
     ) {
+      var data=new FormData()
+      data.append('question', question)
+      data.append('answer1', answer1)
+      data.append('answer2', answer2)
+      data.append('answer3', answer3)
+      data.append('answer4', answer4)
+      data.append('correctAnswer', correctAnswer)
+      if (image) data.append('image', image)
+      data.append('id', id)
       api
-        .put("/api/updatequestion", {
-          question,
-          answer1,
-          answer2,
-          answer3,
-          answer4,
-          correctAnswer,
-          id,
-        })
+        .put("/api/updatequestion", data)
         .then((res) => {
           if (res.status === 200) {
             setQuestionInfo((prevState) => {
@@ -103,6 +114,14 @@ export default function Edit_Question(props) {
           onChange={changeHandler}
         />
       </div>
+      <div className="new-q">
+          <label>Image</label>
+          <input className="ml4" 
+          type="file" 
+          accept="image/x-png,image/jpeg,image/gif" 
+          onChange={changeHandler} 
+          name="image" id="image"/>
+        </div>
       <div className="new-q">
         <label>Answer1</label>
         <textarea
