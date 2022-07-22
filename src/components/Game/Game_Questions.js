@@ -12,7 +12,7 @@ export default function GameQuestions(props) {
     <div className="questions-container">
       <Timer />
       <h1 className="player-name">{props.question}</h1>
-      {props.image && <img style={{height:"100px", width:"100px"}} src={props.image}></img>}
+      {props.image && <img style={{height:"300px", width:"400px"}} src={props.image}></img>}
       <div className="questions-grid">
         <div className="question q1">
           <div className="shape-container">

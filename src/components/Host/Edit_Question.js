@@ -26,6 +26,7 @@ export default function Edit_Question(props) {
 
   const getQuestion = () => {
     api.get(`/api/getquestion/${props.match.params.id}`).then((res) => {
+      console.log('question: ',res.data)
       let question = res.data;
       setQuestionInfo((prevState) => {
         return {

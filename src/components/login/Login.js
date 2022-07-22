@@ -11,6 +11,7 @@ class Login extends Component {
       username: "",
       password: "",
       redirect: false,
+      forbidden: false,
     };
     this.handleInputUsername = this.handleInputUsername.bind(this);
     this.handleInputPassword = this.handleInputPassword.bind(this);
@@ -19,12 +20,14 @@ class Login extends Component {
   handleInputUsername(e) {
     this.setState({
       username: e.target.value,
+      forbidden: false
     });
   }
 
   handleInputPassword(e) {
     this.setState({
       password: e.target.value,
+      forbidden: false
     });
   }
 
@@ -37,7 +40,11 @@ class Login extends Component {
           redirect: true,
         });
       }
-    });
+    }).catch(err =>{
+      this.setState({
+        forbidden: true,
+      })
+    })
   }
   render() {
     if (this.state.redirect) {
@@ -52,6 +59,7 @@ class Login extends Component {
         </div>
         <div className="form">
           <form onSubmit={this.handleSubmit}>
+          {this.state.forbidden?<label className="err">Username or Password incorrect!</label>:''}
             <div>
               <label htmlFor="username" className="text-label">
                 Username

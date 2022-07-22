@@ -96,7 +96,11 @@ class Game extends Component {
         });
         players.forEach((player) => {
           if (player.answeredCorrect) {
-            player.score += internalTimer * 5;
+            if(internalTimer === 1){
+              player.score += internalTimer * 5 + 500;
+            }else{
+              player.score += internalTimer * 5;
+            }
             this.socket.emit("sent-info", {
               id: player.id,
               score: player.score,
@@ -187,8 +191,8 @@ class Game extends Component {
     return (
       <div className="component-container">
         <div className="pin">
-          <p id="player-pin">Kwizz Pin</p>
-          <h1>{pin}</h1>
+          <p id="player-pin">Game PIN</p>
+          <h5>{pin}</h5>
         </div>
         {!isLive && !questionOver && !gameOver ? (
           <div className="btn-players">

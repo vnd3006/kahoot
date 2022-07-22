@@ -38,6 +38,10 @@ instance.interceptors.response.use(
     const originalConfig = err.config;
 
     if (err.response) {
+      if(err.response.data.message == "User is not existed!" || err.response.data.message == "Wrong password!"){
+        return Promise.reject(err);
+
+      }
       // access token expired
       if (err.response.status === 401 && err.response.data.message!="refreshToken is revoked!"&& !originalConfig._retry) {
         // handle infinite loop
